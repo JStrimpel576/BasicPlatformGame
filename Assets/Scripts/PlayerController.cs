@@ -17,7 +17,7 @@ public class NewMonoBehaviourScript : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
 
         maxNumJumps = 1;
-        numJumps = maxNumJumps;
+        numJumps = 1;
     }
 
     // Update is called once per frame
@@ -71,7 +71,7 @@ public class NewMonoBehaviourScript : MonoBehaviour
 
         if (collision.gameObject.CompareTag("Ground"))
         {
-            numJumps = maxNumJumps;
+            numJumps = 1;
         }
     }
 
@@ -79,10 +79,10 @@ public class NewMonoBehaviourScript : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("PinkCollectable"))
+        //double jump
+        if (collision.gameObject.CompareTag("DoubleJump"))
         {
-            string fromPinkCollectable = collision.gameObject.GetComponent<PinkTriangleCollectable>().getTestString();
-            Debug.Log(fromPinkCollectable);
+            maxNumJumps = 2;
         }
     }
 }
