@@ -9,6 +9,9 @@ public class NewMonoBehaviourScript : MonoBehaviour
     //because this is public, it can be accessed through the Unity Editor
     public float horizontalMoveSpeed;
     public float jumpForce;
+
+    public GameObject doubleJumpHatLocation;
+    //public GameObject dashCapeLocation;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -82,7 +85,21 @@ public class NewMonoBehaviourScript : MonoBehaviour
         //double jump
         if (collision.gameObject.CompareTag("DoubleJump"))
         {
+            GameObject hat = collision.gameObject;
+            equipDoubleJumpHat(hat);
             maxNumJumps = 2;
         }
     }
+
+    private void equipDoubleJumpHat(GameObject hat)
+    {
+        hat.transform.position = doubleJumpHatLocation.transform.position;
+        hat.gameObject.transform.SetParent(this.gameObject.transform);
+    }
+
+    //private void equipDashCape(GameObject cape)
+    //{
+    //collision.gameObject.transform.SetParent(null);
+    //
+    //}
 }
