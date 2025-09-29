@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class NewMonoBehaviourScript : MonoBehaviour
 {
@@ -10,8 +11,15 @@ public class NewMonoBehaviourScript : MonoBehaviour
     public float horizontalMoveSpeed;
     public float jumpForce;
 
+    public float dashSpeed;
+    private float maxDashTime = 1.0f;
+    private float dashStoppingSpeed = 0.1f;
+    private float currentDashTime;
+    private bool ableToDash = false;
+
     public GameObject doubleJumpHatLocation;
-    //public GameObject dashCapeLocation;
+    public GameObject dashCapeLocation;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -21,6 +29,8 @@ public class NewMonoBehaviourScript : MonoBehaviour
 
         maxNumJumps = 1;
         numJumps = 1;
+
+        currentDashTime = maxDashTime;
     }
 
     // Update is called once per frame
@@ -28,6 +38,7 @@ public class NewMonoBehaviourScript : MonoBehaviour
     {
         movePlayerLateral();
         jump();
+        dash();
     }
 
     private void movePlayerLateral()
@@ -65,6 +76,22 @@ public class NewMonoBehaviourScript : MonoBehaviour
         }
     }
 
+    private void dash()
+    {
+        if (ableToDash)
+        {
+            if (Input.GetKeyDown(KeyCode.LeftShift))
+            {
+                currentDashTime = 0.0f;
+            }
+            if (currentDashTime < maxDashTime)
+            {
+                rb.linearVelocity = new Vector2(dashSpeed * inputHorizontal, rb.linearVelocity.y);
+                currentDashTime += dashStoppingSpeed;
+            }
+        }
+    }
+
     //Collisions
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -75,6 +102,10 @@ public class NewMonoBehaviourScript : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             numJumps = 1;
+        }
+        else if(collision.gameObject.CompareTag("obBottom"))
+        {
+            SceneManager.LoadScene("SampleScene");
         }
     }
 
@@ -89,6 +120,13 @@ public class NewMonoBehaviourScript : MonoBehaviour
             equipDoubleJumpHat(hat);
             maxNumJumps = 2;
         }
+
+        if(collision.gameObject.CompareTag("Dash"))
+        {
+            GameObject cape = collision.gameObject;
+            equipDashCape(cape);
+            ableToDash = true;
+        }
     }
 
     private void equipDoubleJumpHat(GameObject hat)
@@ -97,9 +135,9 @@ public class NewMonoBehaviourScript : MonoBehaviour
         hat.gameObject.transform.SetParent(this.gameObject.transform);
     }
 
-    //private void equipDashCape(GameObject cape)
-    //{
-    //collision.gameObject.transform.SetParent(null);
-    //
-    //}
+    private void equipDashCape(GameObject cape)
+    {
+        cape.transform.position = dashCapeLocation.transform.position;
+        cape.gameObject.transform.SetParent(this.gameObject.transform);
+    }
 }
